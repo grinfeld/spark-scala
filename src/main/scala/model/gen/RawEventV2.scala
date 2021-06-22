@@ -1,0 +1,4 @@
+package com.dy.spark.scala
+package model.gen
+
+case class RawEventV2(sectionId: Int, dyid: Long, requestTimestamp: Long, procTimestamp: Long, eventUuid: Long, resolvedTimestamp: Long, eventType: String, clientData: Option[ClientData], dpxProps: Option[DpxProps], experimentEngagementProps: Option[ExperimentEngagementProps], id2cuidProps: Option[IdToCuidProps], uiaProps: Option[UiaProps], unitClickProps: Option[UnitClickProps], variationEngagementProps: Option[VariationEngagementProps], session: Option[Int], expSession: Option[String], experimentAttributionState: Option[List[ExperimentAttribution]], schemalessEnrichments: Option[Map[String,Array[Byte]]], rri: Int)
