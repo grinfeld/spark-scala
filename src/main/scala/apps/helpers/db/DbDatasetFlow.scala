@@ -10,10 +10,12 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import scala.language.higherKinds
 
 abstract class DbDatasetFlow private (override val execution: SparkSession => Dataset[Row]) extends StartFlow[Row](execution) {
+  def this(dbProps: DbProps, query: String) = this(sparkSession => DbDatasetFlow.runQueryViaSpark(dbProps, query, sparkSession))
+}
 
-  def this(dbProps: DbProps, query: String) = this(sparkSession => runQueryViaSpark(dbProps, query, sparkSession))
+object DbDatasetFlow {
 
-  private def runQueryViaSpark(dbProps: DbProps, query: String, sparkSession: SparkSession): Dataset[Row] = {
+  private[DbDatasetFlow] def runQueryViaSpark(dbProps: DbProps, query: String, sparkSession: SparkSession): Dataset[Row] = {
     val reader = sparkSession.read
     JdbcToOptionReader(reader, dbProps)
       .setWith("driver", props => props.driverPath)
@@ -23,9 +25,6 @@ abstract class DbDatasetFlow private (override val execution: SparkSession => Da
       .setIf("upperBound", props => props.upperBound)
       .get.jdbc(dbProps.host, query, dbProps.props())
   }
-}
-
-object DbDatasetFlow {
 
   def apply(dbProps: DbProps, query: String): SparkSessionRowType = new DbDatasetFlow(dbProps, query) {}
 

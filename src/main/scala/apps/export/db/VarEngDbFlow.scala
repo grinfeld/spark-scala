@@ -1,7 +1,6 @@
 package com.dy.spark.scala
 package apps.`export`.db
 
-import apps.`export`.ExportArgs
 import apps.helpers.db.{DbDatasetFlow, DbProps}
 import infra.spark.DatasetTypes.SparkSessionType
 
@@ -12,8 +11,8 @@ object VarEngDbFlow {
 
   private val SPLIT_CHAR = "~"
 
-  def apply(dbProps: DbProps, expArgs: ExportArgs): SparkSessionType[Row] = {
-    DbDatasetFlow(dbProps, buildQuery(expArgs)).map(dataset =>
+  def apply(dbProps: DbProps, sectionId: Option[Int], offsetHour: Int): SparkSessionType[Row] = {
+    DbDatasetFlow(dbProps, buildQuery(sectionId, offsetHour)).map(dataset =>
       dataset.withColumn("variation_pair", concat(col("variation_performance_id"), lit(SPLIT_CHAR), col("variation_id"), lit(SPLIT_CHAR), col("variation_name")))
         .groupBy("section_id", "experience_id", "experience_name", "experiment_id", "experiment_version_id", "campaign_id", "campaign_name")
         .agg(collect_list("variation_pair"))
@@ -21,9 +20,9 @@ object VarEngDbFlow {
     )
   }
 
-  private def buildQuery(expArgs: ExportArgs): String = {
-    expArgs.specificSection match {
-      case None => offsetQuery.format(expArgs.offsetHour)
+  private def buildQuery(sectionId: Option[Int], offsetHour: Int): String = {
+    sectionId match {
+      case None => offsetQuery.format(offsetHour)
       case Some(num) => sectionQuery.format(num)
     }
   }

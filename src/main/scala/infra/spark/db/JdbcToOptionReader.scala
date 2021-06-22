@@ -13,7 +13,7 @@ case class JdbcToOptionReader(reader: DataFrameReader, props: DbProps) extends R
       case Some(v) => v match {
         case i:Int => reader.option(name, i)
         case l:Long => reader.option(name, l)
-        case s:Long => reader.option(name, s)
+        case s:String => reader.option(name, s)
         case v => throw new IllegalArgumentException("Unsupported type " + v.getClass)
       }
     }, props)
@@ -22,7 +22,7 @@ case class JdbcToOptionReader(reader: DataFrameReader, props: DbProps) extends R
     JdbcToOptionReader(func(props) match {
       case i:Int => reader.option(name, i)
       case l:Long => reader.option(name, l)
-      case s:Long => reader.option(name, s)
+      case s:String => reader.option(name, s)
       case v => throw new IllegalArgumentException("Unsupported type " + v.getClass)
     }, props)
 
@@ -32,7 +32,7 @@ case class JdbcToOptionReader(reader: DataFrameReader, props: DbProps) extends R
     JdbcToOptionReader(t match {
       case i:Int => reader.option(name, i)
       case l:Long => reader.option(name, l)
-      case s:Long => reader.option(name, s)
+      case s:String => reader.option(name, s)
       case v => throw new IllegalArgumentException("Unsupported type " + v.getClass)
     }, props)
   }
