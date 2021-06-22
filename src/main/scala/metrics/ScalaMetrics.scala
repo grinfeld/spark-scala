@@ -1,14 +1,14 @@
 package com.dy.spark.scala
 package metrics
 
-import com.dy.metrics.functions.{CallExecution, Execution}
+/*import com.dy.metrics.functions.{CallExecution, Execution}
 import com.dy.metrics.{MetricStore, Tag}
 
 import java.time.Duration
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicBoolean*/
 
 sealed trait ScalaMetrics {
-  def increaseCounter(name: String, error: Boolean, value: Long, tags: Tag*): Unit
+/*  def increaseCounter(name: String, error: Boolean, value: Long, tags: Tag*): Unit
   def increaseCounter(name: String, runnable: () => Unit, tags: Tag*): Unit
   def increaseCounter(name: String, error: Boolean, tags: Tag*): Unit
   def increaseCounter[V](name: String, callable: () => V, tags: Tag*): V
@@ -21,10 +21,10 @@ sealed trait ScalaMetrics {
   def gauge(name: String, value: Double, error: Boolean, tags: Tag*): Unit
   def gauge[V](name: String, value: Double, callable: () => V, tags: Tag*): V
   def gauge(name: String, value: Double, runnable: () => Unit, tags: Tag*): Unit
-  def removeGauge(name: String, error: Boolean, tags: Tag*): Unit
+  def removeGauge(name: String, error: Boolean, tags: Tag*): Unit*/
 }
 
-private class ScalaMetricsWrapper(metricStore: MetricStore) extends ScalaMetrics {
+/*private class ScalaMetricsWrapper(metricStore: MetricStore) extends ScalaMetrics {
 
   private def runExecution(runnable: () => Unit): Execution = () => runnable.apply()
   private def runCallableExecution[V](callable: () => V): CallExecution[V] = () => callable.apply()
@@ -83,3 +83,4 @@ object ScalaMetrics extends ScalaMetrics {
   def gauge(name: String, value: Double, runnable: () => Unit, tags: Tag*): Unit = apply().gauge(name, value, runnable, tags: _*)
   def removeGauge(name: String, error: Boolean, tags: Tag*): Unit = apply().removeGauge(name, error, tags: _*)
 }
+*/
