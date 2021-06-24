@@ -7,7 +7,8 @@ import infra.spark.RowWrapper.RowWrapper
 import org.apache.spark.sql.{Encoder, Encoders, Row}
 
 object RawEventV2ExportTransformer {
-  implicit val SparkEncoder: Encoder[RawEventV2Export] = Encoders.bean[RawEventV2Export](RawEventV2Export.getClass.asInstanceOf[Class[RawEventV2Export]])
+  implicit val SparkEncoder: Encoder[RawEventV2Export] =
+    Encoders.bean[RawEventV2Export](RawEventV2Export.getClass.asInstanceOf[Class[RawEventV2Export]])
 
   def transformRow: Row => RawEventV2Export = { implicit row => {
       RawEventV2Export(row.getAsOption("section_id"), row.getAsList("variation_names"),
