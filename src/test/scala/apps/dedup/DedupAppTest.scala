@@ -1,7 +1,8 @@
 package com.dy.spark.scala
 package apps.dedup
 
-import com.dy.spark.scala.model.gen.{ClientData, DpxProps, RawEventV2}
+import model.gen.{ClientData, DpxProps, RawEventV2}
+
 import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import org.apache.spark.sql.{Encoders, SparkSession}
 import org.scalatest.flatspec.AnyFlatSpec

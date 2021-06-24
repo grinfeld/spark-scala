@@ -1,22 +1,26 @@
 package com.dy.spark.scala
 package apps.`export`.db
 
+import apps.`export`.model.RawEventV2Export
+import apps.`export`.model.spark.RawEventV2ExportTransformer
+import apps.`export`.model.spark.RawEventV2ExportTransformer.SparkEncoder
 import apps.helpers.db.{DbDatasetFlow, DbProps}
 import infra.spark.DatasetTypes.SparkSessionType
 
-import org.apache.spark.sql.Row
 import org.apache.spark.sql.functions.{col, collect_list, concat, lit}
 
 object VarEngDbFlow {
 
   private val SPLIT_CHAR = "~"
 
-  def apply(dbProps: DbProps, sectionId: Option[Int], offsetHour: Int): SparkSessionType[Row] = {
-    DbDatasetFlow(dbProps, buildQuery(sectionId, offsetHour)).map(dataset =>
-      dataset.withColumn("variation_pair", concat(col("variation_performance_id"), lit(SPLIT_CHAR), col("variation_id"), lit(SPLIT_CHAR), col("variation_name")))
-        .groupBy("section_id", "experience_id", "experience_name", "experiment_id", "experiment_version_id", "campaign_id", "campaign_name")
-        .agg(collect_list("variation_pair"))
-        .withColumnRenamed("collect_list(variation_pair)", "variation_names")
+  def apply(dbProps: DbProps, sectionId: Option[Int], offsetHour: Int): SparkSessionType[RawEventV2Export] = {
+    DbDatasetFlow(dbProps, buildQuery(sectionId, offsetHour)).map(dataset => {
+        dataset.withColumn("variation_pair", concat(col("variation_performance_id"), lit(SPLIT_CHAR), col("variation_id"), lit(SPLIT_CHAR), col("variation_name")))
+          .groupBy("section_id", "experience_id", "experience_name", "experiment_id", "experiment_version_id", "campaign_id", "campaign_name")
+          .agg(collect_list("variation_pair"))
+          .withColumnRenamed("collect_list(variation_pair)", "variation_names")
+          .map(RawEventV2ExportTransformer.transformRow)
+      }
     )
   }
 

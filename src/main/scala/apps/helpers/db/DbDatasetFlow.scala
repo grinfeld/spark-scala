@@ -9,7 +9,7 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.language.higherKinds
 
-abstract class DbDatasetFlow private (override val execution: SparkSession => Dataset[Row]) extends StartFlow[Row](execution) {
+class DbDatasetFlow private (override val execution: SparkSession => Dataset[Row]) extends StartFlow[Row](execution) {
   def this(dbProps: DbProps, query: String) = this(sparkSession => DbDatasetFlow.runQueryViaSpark(dbProps, query, sparkSession))
 }
 

@@ -52,25 +52,9 @@ class PairStartFlow[A1, A2, C](val start: SparkSession => (Dataset[A1],Dataset[A
     new StartFlow[B](sparkSession => flow.execution(this.execution(sparkSession)))
 }*/
 
-class FlowFromDatasetPairFlow[A1, A2, C](val first: SparkSessionType[A1], val second: SparkSessionType[A2], val combiner: FromDatasetPairFlow[A1, A2, C]) extends SparkSessionType[C] {
-  override def execution: SparkSession => Dataset[C] = sparkSession => combiner.execution((first.execution(sparkSession), second.execution(sparkSession)))
 
-  override def map[D](func: Dataset[C] => Dataset[D]): SparkSessionType[D] =
-    this concat new FromDatasetFlow[C, D](func)
 
-  override def concat[B](flow: Flow[Dataset[C], B, Dataset]): SparkSessionType[B] =
-    new StartFlow[B](sparkSession => flow.execution(this.execution(sparkSession)))
-}
 
-class FromDatasetPairFlow[I1, I2, C](override val func: (Dataset[I1], Dataset[I2]) => Dataset[C])
-                                  extends FPairFlow[I1, I2, C, Dataset](func) {
-  override def concat[B](flow: Flow[Dataset[C], B, Dataset]): Tuple2DatasetType[I1, I2, B] =
-      new FromDatasetPairFlow[I1, I2, B]((f1: Dataset[I1], f2:Dataset[I2]) => flow.execution(this.execution((f1, f2)))) {}
-
-  override def map[D](func: Dataset[C] => Dataset[D]): Tuple2DatasetType[I1, I2, D] =
-    this concat new FromDatasetFlow[C, D](func)
-
-}
 
 trait DatasetFlowOutput[C, O] extends FlowOutput[C, O, Dataset]
 

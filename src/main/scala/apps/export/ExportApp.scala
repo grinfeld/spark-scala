@@ -3,10 +3,13 @@ package apps.`export`
 
 import apps.ExecutedApp
 import apps.`export`.db.{S3ExportPathsBySectionFlow, VarEngDbFlow}
+import apps.`export`.model.RawEventV2Export
+import apps.`export`.model.spark.RawEventV2ExportTransformer
+import apps.`export`.model.spark.RawEventV2ExportTransformer.SparkEncoder
 import apps.helpers.db.DbProps
 import infra.FlowOutput
 import infra.spark.DatasetTypes.SparkSessionType
-import infra.spark.{FlowFromDatasetPairFlow, FromDatasetPairFlow, ParquetWriterOutput}
+import infra.spark.{PairStartFlowToDatasetPairFlow, ParquetWriterOutput}
 
 import org.apache.spark.sql.{Dataset, Row, SaveMode}
 
@@ -20,7 +23,7 @@ import scala.util.{Failure, Success, Try}
  * @param output describes the output
  */
 case class ExportApp private[`export`](override val args: ExportArgs,
-       pathProvider: SparkSessionType[String], dbFlow: SparkSessionType[Row], output: FlowOutput[Row, Unit, Dataset])
+       pathProvider: SparkSessionType[String], dbFlow: SparkSessionType[RawEventV2Export], output: FlowOutput[Row, Unit, Dataset])
   extends ExecutedApp[ExportArgs](args) {
   override def start(): Unit = {
     val sparkSession = createSparkSessionBuilder().getOrCreate()
@@ -29,24 +32,37 @@ case class ExportApp private[`export`](override val args: ExportArgs,
     // dbFlow - getting data from DB meta data
 
     // defines the way we read data from s3
-    val eventFlow: SparkSessionType[Row] = pathProvider.map((ds: Dataset[String]) => {
+    val eventFlow = pathProvider.map((ds: Dataset[String]) => {
       ds.collect().map(path => {
         Try(sparkSession.read.format("parquet").load(path)) match {
           case Success(p) => p
           case Failure(e) => throw e
         }
-      }).reduce((p1: Dataset[Row], p2: Dataset[Row]) => p1.union(p2))
+      })
+        .reduce((p1: Dataset[Row], p2: Dataset[Row]) => p1.union(p2))
+        .map(RawEventV2ExportTransformer.transformRow)
     })
 
-    // how to to merge 2 flows (should be defined outside of this class, maybe?)
-    val mergeFlow: FromDatasetPairFlow[Row, Row, Row] = new FromDatasetPairFlow[Row, Row, Row]((eventDataset, dbDataset) => eventDataset.join(dbDataset))
-
     // final flow - encapsulated the whole logic
-    val finalFlow = new FlowFromDatasetPairFlow[Row, Row, Row](eventFlow, dbFlow, mergeFlow)
+    val finalFlow = PairStartFlowToDatasetPairFlow[RawEventV2Export, RawEventV2Export, Row](
+      eventFlow,
+      dbFlow,
+      (eventDataset, dbDataset) => {
+        val dbDatasetWithSelect = dbDataset.select("campaignId", "campaignName", "experienceName", "experienceId", "experimentId", "sectionId", "versionId", "variationNames")
+
+        val varEngs = eventDataset.filter(r => r.eventType.exists(t => t equals "ENGAGEMENT"))
+          .drop("campaignId", "campaignName", "experienceName", "experienceId", "variationNames")
+          .join(dbDatasetWithSelect, columns, "left")
+        val noVarEng = eventDataset.filter(r => r.eventType.exists(t => !t.equals("ENGAGEMENT"))).selectExpr(columns:_*)
+        noVarEng.union(varEngs)
+      }
+    )
 
     // building output and initiating
     output.output(finalFlow.execution(createSparkSessionBuilder().getOrCreate()))
   }
+
+  private val columns = List("sectionId", "experimentId", "versionId")
 }
 
 object ExportApp {
