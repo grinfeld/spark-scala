@@ -9,7 +9,7 @@ import apps.`export`.model.spark.RawEventV2ExportTransformer.SparkEncoder
 import apps.helpers.db.DbProps
 import infra.FlowOutput
 import infra.spark.DatasetTypes.SparkSessionType
-import infra.spark.{PairStartFlowToDatasetPairFlow, ParquetWriterOutput}
+import infra.spark.{PairStartFlowToDatasetFlow, ParquetWriterOutput}
 
 import org.apache.spark.sql.{Dataset, Row, SaveMode}
 
@@ -44,7 +44,7 @@ case class ExportApp private[`export`](override val args: ExportArgs,
     })
 
     // final flow - encapsulated the whole logic
-    val finalFlow = PairStartFlowToDatasetPairFlow[RawEventV2Export, RawEventV2Export, Row](
+    val finalFlow = PairStartFlowToDatasetFlow[RawEventV2Export, RawEventV2Export, Row](
       eventFlow,
       dbFlow,
       (eventDataset, dbDataset) => {
