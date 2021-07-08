@@ -1,7 +1,7 @@
 package com.dy.spark.scala
 package model.gen.raweventtype
 
-trait RawEventType {
+sealed trait RawEventType {
   def name: String
   override def toString: String = name
 }

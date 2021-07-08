@@ -36,7 +36,13 @@ class DedupAppTest extends AnyFlatSpec with Matchers with BeforeAndAfterEach wit
 
 /*    val sparkSession = SparkSession.builder().master("local[*]").getOrCreate()
     sparkSession.createDataFrame(List(expected))
-      .write.parquet(sparkTmpDir + "raw")*/
+      .write.parquet(sparkTmpDir + "raw")
+
+    val encoderSchema = Encoders.product[RawEventV2].schema
+
+
+    sparkSession.read.parquet(sparkTmpDir + "raw").as(Encoders.product[RawEventV2])
+      .foreach(f => println(f))*/
 
     val config = ConfigFactory.load()
       .withValue("spark.master", ConfigValueFactory.fromAnyRef("local[*]"))
