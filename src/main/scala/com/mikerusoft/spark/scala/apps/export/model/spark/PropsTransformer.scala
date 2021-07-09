@@ -1,22 +1,22 @@
 package com.mikerusoft.spark.scala.apps.`export`.model.spark
 
-import com.mikerusoft.spark.scala.apps.`export`.model.{PRODUCT, RawEventV2Export, RecommendationContextType}
+import com.mikerusoft.spark.scala.apps.`export`.model.{PRODUCT, IncomingEventExport, RecommendationContextType}
 import com.mikerusoft.spark.scala.infra.spark.RowWrapper.RowWrapper
 import com.mikerusoft.spark.scala.model.gen.enums._
 import org.apache.spark.sql.Row
 
 trait PropsTransformer[T] {
-  def transform(tp: T, row: Row, copyTo: RawEventV2Export): RawEventV2Export
+  def transform(tp: T, row: Row, copyTo: IncomingEventExport): IncomingEventExport
 }
 
 object PropsTransformer {
 
   implicit class EventTypeTransformer[T <: RawEventType](tp: T) {
-    def transform(row: Row, copyTo: RawEventV2Export)(implicit transformer: PropsTransformer[T]) : RawEventV2Export =
+    def transform(row: Row, copyTo: IncomingEventExport)(implicit transformer: PropsTransformer[T]) : IncomingEventExport =
       transformer.transform(tp, row, copyTo)
   }
 
-  implicit object DpxPropsTransformer extends PropsTransformer[EVENT] {
+  implicit object EventPropsTransformer extends PropsTransformer[EVENT] {
     val REMOVE_FROM_CART_V1 = "remove-from-cart-v1"
     val ADD_TO_WISHLIST_V1 = "add-to-wishlist-v1"
     val ADD_TO_CART_V1 = "add-to-cart-v1"
@@ -24,7 +24,7 @@ object PropsTransformer {
     val SYNC_CART_V1 = "sync-cart-v1"
     val SYNC_WISH_LIST_V1 = "sync-wishlist-v1"
 
-    override def transform(tp: EVENT, row: Row, copyTo: RawEventV2Export): RawEventV2Export = {
+    override def transform(tp: EVENT, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
       copyTo.copy(
         eventId = row.getAsOption("eventId"),
         eventName = row.getAsOption("eventName"),
@@ -32,8 +32,8 @@ object PropsTransformer {
       )
     }
   }
-  implicit object UiaPropsTransformer extends PropsTransformer[VIEW] {
-    override def transform(tp: VIEW, row: Row, copyTo: RawEventV2Export): RawEventV2Export = {
+  implicit object ViewPropsTransformer extends PropsTransformer[VIEW] {
+    override def transform(tp: VIEW, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
       row.getAsOption[Row]("pageContext") match {
         case None => copyTo
         case Some(ctx) =>
@@ -51,7 +51,7 @@ object PropsTransformer {
     }
   }
   implicit object VarPropsTransformer extends PropsTransformer[VAR] {
-    override def transform(tp: VAR, row: Row, copyTo: RawEventV2Export): RawEventV2Export = {
+    override def transform(tp: VAR, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
       val experimentMetadataRow: Row = row.getAs("experimentMetadata")
       copyTo.copy(
         engagementType = row.getAsOption("experimentEngagementType"),
@@ -61,7 +61,7 @@ object PropsTransformer {
       )
     }
   }
-  implicit object Id2CUIDPropsTransformer extends PropsTransformer[IDENTIFY] {
-    override def transform(tp: IDENTIFY, row: Row, copyTo: RawEventV2Export): RawEventV2Export = copyTo
+  implicit object IdentifyPropsTransformer extends PropsTransformer[IDENTIFY] {
+    override def transform(tp: IDENTIFY, row: Row, copyTo: IncomingEventExport): IncomingEventExport = copyTo
   }
 }

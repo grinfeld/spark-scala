@@ -1,15 +1,15 @@
 package com.mikerusoft.spark.scala.apps.`export`.model.spark
 
 import PropsTransformer._
-import com.mikerusoft.spark.scala.apps.`export`.model.RawEventV2Export
+import com.mikerusoft.spark.scala.apps.`export`.model.IncomingEventExport
 import com.mikerusoft.spark.scala.infra.spark.RowWrapper.RowWrapper
 import com.mikerusoft.spark.scala.model.gen.enums._
 import org.apache.spark.sql.{Encoder, Encoders, Row}
 
-object RawEventV2ExportTransformer {
-  implicit val SparkEncoder: Encoder[RawEventV2Export] = Encoders.product[RawEventV2Export]
+object IncomingEventExportTransformer {
+  implicit val SparkEncoder: Encoder[IncomingEventExport] = Encoders.product[IncomingEventExport]
 
-  implicit class RawEventV2ExportWrapper(exp: RawEventV2Export) {
+  implicit class RawEventV2ExportWrapper(exp: IncomingEventExport) {
     def rawEventType: Option[RawEventType] = {
       exp.eventType match {
         case None => None
@@ -17,7 +17,7 @@ object RawEventV2ExportTransformer {
       }
     }
 
-    def transform[T <: RawEventType](row: Row): RawEventV2Export = {
+    def transform[T <: RawEventType](row: Row): IncomingEventExport = {
       rawEventType match {
         case None => exp
         // since, we don't receive implicit type of variable, but "parent" type,
@@ -34,8 +34,8 @@ object RawEventV2ExportTransformer {
     }
   }
 
-  def transformRow: Row => RawEventV2Export = { implicit row => {
-      RawEventV2Export(row.getAsOption("section_id"), row.getAsList("variation_names"),
+  def transformRow: Row => IncomingEventExport = { implicit row => {
+      IncomingEventExport(row.getAsOption("section_id"), row.getAsList("variation_names"),
         row.getAsOption("experiment_id"), row.getAsOption("experience_id"), row.getAsOption("experience_name"),
         row.getAsOption("experiment_version_id"), row.getAsOption("campaign_id"), row.getAsOption("campaign_name")
       ).copy(eventType = row.getAsOption[String]("eventType")).transform(row)

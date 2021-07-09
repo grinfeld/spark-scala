@@ -1,6 +1,6 @@
 package com.mikerusoft.spark.scala.apps.`export`.model
 
-case class RawEventV2Export(
+case class IncomingEventExport(
              userId:  Option[Long],
              eventType:  Option[String],
              reqTimestamp:  Option[Long],
@@ -32,11 +32,11 @@ case class RawEventV2Export(
   def this() = this(None,None,None,None,None,None,None,None,None,List(),None,None,List(),None,None,None,None,List(),List(),None,None,None, List(), List(), None, None, None)
 }
 
-object RawEventV2Export {
+object IncomingEventExport {
 
-  def apply(): RawEventV2Export = new RawEventV2Export()
+  def apply(): IncomingEventExport = new IncomingEventExport()
 
   // basic
-  def apply(customerId: Option[Int], variationPairs: List[String], experimentId: Option[Int], experienceId: Option[Int], experienceName: Option[String], expVerId: Option[Int], campaignId: Option[Int], campaignName: Option[String]): RawEventV2Export =
-    new RawEventV2Export().copy(customerId = customerId, variationNames = variationPairs, experimentId = experimentId, experienceId = experienceId, experienceName = experienceName, versionId = expVerId, campaignId = campaignId, campaignName = campaignName)
+  def apply(customerId: Option[Int], variationPairs: List[String], experimentId: Option[Int], experienceId: Option[Int], experienceName: Option[String], expVerId: Option[Int], campaignId: Option[Int], campaignName: Option[String]): IncomingEventExport =
+    new IncomingEventExport().copy(customerId = customerId, variationNames = variationPairs, experimentId = experimentId, experienceId = experienceId, experienceName = experienceName, versionId = expVerId, campaignId = campaignId, campaignName = campaignName)
 }

@@ -2,9 +2,9 @@ package com.mikerusoft.spark.scala.apps.`export`
 
 import com.mikerusoft.spark.scala.apps.ExecutedApp
 import com.mikerusoft.spark.scala.apps.`export`.db.{S3ExportPathsByCustomerFlow, VarEngDbFlow}
-import com.mikerusoft.spark.scala.apps.`export`.model.RawEventV2Export
-import com.mikerusoft.spark.scala.apps.`export`.model.spark.RawEventV2ExportTransformer
-import com.mikerusoft.spark.scala.apps.`export`.model.spark.RawEventV2ExportTransformer.SparkEncoder
+import com.mikerusoft.spark.scala.apps.`export`.model.IncomingEventExport
+import com.mikerusoft.spark.scala.apps.`export`.model.spark.IncomingEventExportTransformer
+import com.mikerusoft.spark.scala.apps.`export`.model.spark.IncomingEventExportTransformer.SparkEncoder
 import com.mikerusoft.spark.scala.apps.helpers.db.DbProps
 import com.mikerusoft.spark.scala.infra.FlowOutput
 import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.SparkSessionType
@@ -21,7 +21,7 @@ import scala.util.{Failure, Success, Try}
  * @param output describes the output
  */
 case class ExportApp private[`export`](override val args: ExportArgs,
-       pathProvider: SparkSessionType[String], dbFlow: SparkSessionType[RawEventV2Export], output: FlowOutput[Row, Unit, Dataset])
+                                       pathProvider: SparkSessionType[String], dbFlow: SparkSessionType[IncomingEventExport], output: FlowOutput[Row, Unit, Dataset])
   extends ExecutedApp[ExportArgs](args) {
   override def start(): Unit = {
     val sparkSession = createSparkSessionBuilder().getOrCreate()
@@ -38,11 +38,11 @@ case class ExportApp private[`export`](override val args: ExportArgs,
         }
       })
         .reduce((p1: Dataset[Row], p2: Dataset[Row]) => p1.union(p2))
-        .map(RawEventV2ExportTransformer.transformRow)
+        .map(IncomingEventExportTransformer.transformRow)
     })
 
     // final flow - encapsulated the whole logic
-    val finalFlow = PairStartFlowToDatasetFlow[RawEventV2Export, RawEventV2Export, Row](
+    val finalFlow = PairStartFlowToDatasetFlow[IncomingEventExport, IncomingEventExport, Row](
       eventFlow,
       dbFlow,
       (eventDataset, dbDataset) => {
