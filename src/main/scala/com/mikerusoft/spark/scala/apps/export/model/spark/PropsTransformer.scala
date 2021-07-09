@@ -16,6 +16,18 @@ object PropsTransformer {
       transformer.transform(tp, row, copyTo)
   }
 
+  implicit object PropsTransformer extends PropsTransformer[RawEventType] {
+    override def transform(tp: RawEventType, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
+      tp match {
+        case v: EVENT => v.transform(row, copyTo)
+        case v: VIEW => v.transform(row, copyTo)
+        case v: VAR => v.transform(row, copyTo)
+        case v: IDENTIFY => v.transform(row, copyTo)
+        case _: NA => copyTo
+      }
+    }
+  }
+
   implicit object EventPropsTransformer extends PropsTransformer[EVENT] {
     val REMOVE_FROM_CART_V1 = "remove-from-cart-v1"
     val ADD_TO_WISHLIST_V1 = "add-to-wishlist-v1"

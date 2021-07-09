@@ -20,16 +20,7 @@ object IncomingEventExportTransformer {
     def transform[T <: RawEventType](row: Row): IncomingEventExport = {
       rawEventType match {
         case None => exp
-        // since, we don't receive implicit type of variable, but "parent" type,
-        // so compiler doesn't know what "implicit" to use, so seems better to use simple inheritance or similar,
-        // instead ad-hoc inheritance here
-        case Some(tp) => tp match {
-          case v: EVENT => v.transform(row, exp)
-          case v: VIEW => v.transform(row, exp)
-          case v: VAR => v.transform(row, exp)
-          case v: IDENTIFY => v.transform(row, exp)
-          case v: NA => exp
-        }
+        case Some(tp) => tp.transform(row, exp)
       }
     }
   }
