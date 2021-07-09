@@ -5,9 +5,9 @@ import apps.ExecutedApp
 import apps.helpers.ReadFromFilesFlow
 import apps.helpers.sections.FilterSectionByIdFlow
 import infra.spark.DatasetTypes.{Dataset2RowType, SparkSessionRowType}
-import infra.spark.ParquetWriterOutput
 import infra.{Flow, FlowOutput}
 
+import com.dy.spark.scala.infra.spark.ParquetWriterOutput
 import org.apache.spark.sql.{Dataset, Row, SaveMode, SparkSession, functions}
 
 case class DedupApp private[dedup] (override val args: DedupArgs, startFlow: SparkSessionRowType, filterSectionsFlow: Dataset2RowType,

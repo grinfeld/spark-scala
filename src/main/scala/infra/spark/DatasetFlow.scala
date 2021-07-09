@@ -52,21 +52,6 @@ class PairStartFlow[A1, A2, C](val start: SparkSession => (Dataset[A1],Dataset[A
     new StartFlow[B](sparkSession => flow.execution(this.execution(sparkSession)))
 }*/
 
-
-
-
-
-trait DatasetFlowOutput[C, O] extends FlowOutput[C, O, Dataset]
-
-class ParquetWriterOutput[C](val pathTo: String, val saveMode: SaveMode, val writeCoalesce: Option[Int], val colNames: String*) extends DatasetFlowOutput[C, Unit] {
-  override def output(dataset: Dataset[C]): Unit = {
-    (writeCoalesce match {
-      case Some(numPartitions) => dataset.coalesce(numPartitions)
-      case None => dataset
-    }).write.mode(saveMode).partitionBy(colNames:_*).save(pathTo)
-  }
-}
-
 object DatasetFlow {
   def createFromSession[C](func: SparkSession => Dataset[C]): SparkSessionType[C] = new StartFlow[C](func)
   def createFromDataset[I, C](func: Dataset[I] => Dataset[C]): DatasetType[I, C] = new FromDatasetFlow[I,C](func)
