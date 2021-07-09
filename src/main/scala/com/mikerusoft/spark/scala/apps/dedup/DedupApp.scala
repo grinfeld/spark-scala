@@ -1,9 +1,11 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.dedup
 
-import infra.spark.DatasetTypes.{Dataset2RowType, SparkSessionRowType}
-import infra.FlowOutput
-
+import com.mikerusoft.spark.scala.apps.ExecutedApp
+import com.mikerusoft.spark.scala.apps.helpers.ReadFromFilesFlow
+import com.mikerusoft.spark.scala.apps.helpers.customers.FilterCustomerByIdFlow
+import com.mikerusoft.spark.scala.infra.{Flow, FlowOutput}
+import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.{Dataset2RowType, SparkSessionRowType}
+import com.mikerusoft.spark.scala.infra.spark.ParquetWriterOutput
 import org.apache.spark.sql.{Dataset, Row, SaveMode, SparkSession, functions}
 
 case class DedupApp private[dedup] (override val args: DedupArgs, startFlow: SparkSessionRowType, filterSectionsFlow: Dataset2RowType,
@@ -24,7 +26,7 @@ object DedupApp {
   def apply(args: DedupArgs) = new DedupApp(
       args,
       ReadFromFilesFlow(args.inputFormat.getOrElse("avro"), args.inputPath),
-      FilterSectionByIdFlow(args),
+      FilterCustomerByIdFlow(args),
       new ParquetWriterOutput[Row](args.outputPath, SaveMode.Overwrite, None, "customerId")
   )
 }

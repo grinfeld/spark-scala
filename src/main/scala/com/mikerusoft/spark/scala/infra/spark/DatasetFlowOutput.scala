@@ -1,6 +1,6 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.infra.spark
 
+import com.mikerusoft.spark.scala.infra.FlowOutput
 import org.apache.spark.sql.{Dataset, SaveMode}
 
 import scala.collection.JavaConverters._

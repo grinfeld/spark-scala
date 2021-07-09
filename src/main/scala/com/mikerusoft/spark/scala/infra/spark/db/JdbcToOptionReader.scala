@@ -1,7 +1,8 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.infra.spark.db
 
+import com.mikerusoft.spark.scala.apps.helpers.db.DbProps
 import org.apache.spark.sql.DataFrameReader
+import com.mikerusoft.spark.scala.infra.db.Reader
 
 case class JdbcToOptionReader(reader: DataFrameReader, props: DbProps) extends Reader[DataFrameReader, DbProps] {
   override def setIf[T](name: String, func: DbProps => Option[T]): Reader[DataFrameReader, DbProps] =

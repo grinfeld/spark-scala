@@ -4,8 +4,6 @@ version := "0.1"
 
 scalaVersion := "2.12.14"
 
-idePackagePrefix := Some("com.mikerusoft.spark.scala")
-
 scalacOptions += "-Ypartial-unification"
 
 val versions = new {

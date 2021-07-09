@@ -1,7 +1,7 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.dedup
 
-
+import com.mikerusoft.spark.scala.model.gen.{ClientData, EventProps, IncomingEvent}
+import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import org.apache.spark.sql.{Encoders, SparkSession}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -44,12 +44,12 @@ class DedupAppTest extends AnyFlatSpec with Matchers with BeforeAndAfterEach wit
 
     val config = ConfigFactory.load()
       .withValue("spark.master", ConfigValueFactory.fromAnyRef("local[*]"))
-      .withValue("dy.spark.run.datehour", ConfigValueFactory.fromAnyRef("2021-06-20 15"))
-      .withValue("dy.spark.execution.plan", ConfigValueFactory.fromAnyRef("true"))
-      .withValue("dy.spark.app.name", ConfigValueFactory.fromAnyRef("dedup"))
-      .withValue("dy.spark.input.path", ConfigValueFactory.fromAnyRef(ClassLoader.getSystemResource("file1.parquet").getFile))
-      .withValue("dy.spark.input.format", ConfigValueFactory.fromAnyRef("parquet"))
-      .withValue("dy.spark.output.path", ConfigValueFactory.fromAnyRef(sparkTmpDir + "output/"))
+      .withValue("mikerusoft.spark.run.datehour", ConfigValueFactory.fromAnyRef("2021-06-20 15"))
+      .withValue("mikerusoft.spark.execution.plan", ConfigValueFactory.fromAnyRef("true"))
+      .withValue("mikerusoft.spark.app.name", ConfigValueFactory.fromAnyRef("dedup"))
+      .withValue("mikerusoft.spark.input.path", ConfigValueFactory.fromAnyRef(ClassLoader.getSystemResource("file1.parquet").getFile))
+      .withValue("mikerusoft.spark.input.format", ConfigValueFactory.fromAnyRef("parquet"))
+      .withValue("mikerusoft.spark.output.path", ConfigValueFactory.fromAnyRef(sparkTmpDir + "output/"))
 
     val args = DedupArgs(config)
 

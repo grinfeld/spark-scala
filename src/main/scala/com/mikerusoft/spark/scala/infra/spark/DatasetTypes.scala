@@ -1,6 +1,6 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.infra.spark
 
+import com.mikerusoft.spark.scala.infra.Flow
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 object DatasetTypes {

@@ -1,4 +1,3 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps
 
 import org.apache.spark.sql.SparkSession

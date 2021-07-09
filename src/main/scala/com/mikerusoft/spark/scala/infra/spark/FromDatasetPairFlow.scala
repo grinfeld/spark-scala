@@ -1,9 +1,7 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.infra.spark
 
 import DatasetTypes.Tuple2DatasetType
-import infra.FPairFlow
-
+import com.mikerusoft.spark.scala.infra.{FPairFlow, Flow}
 import org.apache.spark.sql.Dataset
 
 class FromDatasetPairFlow[I1, I2, C](override val func: (Dataset[I1], Dataset[I2]) => Dataset[C])

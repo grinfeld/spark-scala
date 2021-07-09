@@ -1,5 +1,5 @@
 package com.mikerusoft.spark.scala
-package com.mikerusoft.spark.scala.model.gen.enums
+package model.gen.enums
 
 sealed trait RawEventType {
   def name: String

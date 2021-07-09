@@ -1,16 +1,15 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.`export`.db
 
-import apps.helpers.db.DbProps
-import infra.spark.DatasetTypes.SparkSessionType
-
+import com.mikerusoft.spark.scala.apps.helpers.db.{DbDatasetFlow, DbProps}
+import com.mikerusoft.spark.scala.infra.SimplePathProvider
+import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.SparkSessionType
+import com.mikerusoft.spark.scala.infra.spark.StartFlow
 import org.apache.spark.sql.Encoders
 
 import java.time.LocalDateTime
 
-
-object S3ExportPathsBySectionFlow {
-  private val query = "select sec.time_zone_offset from dypd_sections as sec where sec.id = "
+object S3ExportPathsByCustomerFlow {
+  private val query = "select sec.time_zone_offset from customers as sec where sec.id = "
 
   private val pathProvider = new SimplePathProvider("date=%s/hour=%s/") {
     override def getPaths(start: LocalDateTime, finish: LocalDateTime): List[String] = buildS3Paths(start, finish, List())

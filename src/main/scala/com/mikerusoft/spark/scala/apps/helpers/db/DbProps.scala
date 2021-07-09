@@ -1,10 +1,7 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.helpers.db
 
-import infra.ConfigWrapper.ConfigWrapper
-
 import com.typesafe.config.Config
-
+import com.mikerusoft.spark.scala.infra.ConfigWrapper.ConfigWrapper
 import java.util.Properties
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
@@ -21,7 +18,7 @@ case class DbProps (driverPath: String, host: String, user: Option[String], pass
 object DbProps {
   private val JDBC_MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver"
   def apply(config: Config): DbProps = {
-    val dbConfigPath = config.getString("dy.spark.db.config.path")
+    val dbConfigPath = config.getString("mikerusoft.spark.db.config.path")
     val dbConfigMap =
       Try(Source.fromFile(dbConfigPath)) match {
         case Failure(e) => throw e
@@ -30,12 +27,12 @@ object DbProps {
       }
 
     new DbProps(
-      config.getString("dy.spark.db.driver", JDBC_MYSQL_DRIVER),
+      config.getString("mikerusoft.spark.db.driver", JDBC_MYSQL_DRIVER),
       dbConfigMap("host"), dbConfigMap.get("user"), dbConfigMap.get("password"),
-      config.getStringOpt("dy.spark.db.partitionColumn"), // customerId
-      config.getIntOpt("dy.spark.db.lowerBound"),
-      config.getIntOpt("dy.spark.db.upperBound"),
-      config.getIntOpt("dy.spark.db.numPartitions"),
+      config.getStringOpt("mikerusoft.spark.db.partitionColumn"), // customerId
+      config.getIntOpt("mikerusoft.spark.db.lowerBound"),
+      config.getIntOpt("mikerusoft.spark.db.upperBound"),
+      config.getIntOpt("mikerusoft.spark.db.numPartitions"),
     )
   }
 }

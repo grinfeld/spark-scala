@@ -1,4 +1,3 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.`export`.model
 
 sealed trait RecommendationContextType {

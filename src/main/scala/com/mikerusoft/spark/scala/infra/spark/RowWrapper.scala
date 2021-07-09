@@ -1,5 +1,5 @@
-package com.mikerusoft.spark.scala
-package com.mikerusoft.spark.scala.infra.spark
+package com.mikerusoft.spark.scala.infra
+package spark
 
 import org.apache.spark.sql.Row
 

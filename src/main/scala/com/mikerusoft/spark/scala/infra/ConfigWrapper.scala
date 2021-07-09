@@ -1,4 +1,3 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.infra
 
 import scala.collection.JavaConverters._

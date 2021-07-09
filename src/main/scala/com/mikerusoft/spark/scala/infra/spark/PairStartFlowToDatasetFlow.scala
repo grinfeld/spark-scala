@@ -1,9 +1,7 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.infra.spark
 
-import infra.FPairFlow
-
 import DatasetTypes.SparkSessionType
+import com.mikerusoft.spark.scala.infra.{FPairFlow, Flow}
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 class PairStartFlowToDatasetFlow[A1, A2, C](val first: SparkSessionType[A1], val second: SparkSessionType[A2], val combiner: FPairFlow[A1, A2, C, Dataset]) extends SparkSessionType[C] {

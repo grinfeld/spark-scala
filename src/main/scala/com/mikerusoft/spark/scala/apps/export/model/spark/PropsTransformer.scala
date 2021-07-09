@@ -1,10 +1,8 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.`export`.model.spark
 
-import apps.`export`.model.PRODUCT
-import infra.spark.RowWrapper.RowWrapper
-import model.gen.enums._
-
+import com.mikerusoft.spark.scala.apps.`export`.model.{PRODUCT, RawEventV2Export, RecommendationContextType}
+import com.mikerusoft.spark.scala.infra.spark.RowWrapper.RowWrapper
+import com.mikerusoft.spark.scala.model.gen.enums._
 import org.apache.spark.sql.Row
 
 trait PropsTransformer[T] {

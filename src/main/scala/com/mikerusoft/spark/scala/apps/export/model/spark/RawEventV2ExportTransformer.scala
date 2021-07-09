@@ -1,10 +1,9 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.`export`.model.spark
 
 import PropsTransformer._
-import infra.spark.RowWrapper.RowWrapper
-import model.gen.enums._
-
+import com.mikerusoft.spark.scala.apps.`export`.model.RawEventV2Export
+import com.mikerusoft.spark.scala.infra.spark.RowWrapper.RowWrapper
+import com.mikerusoft.spark.scala.model.gen.enums._
 import org.apache.spark.sql.{Encoder, Encoders, Row}
 
 object RawEventV2ExportTransformer {

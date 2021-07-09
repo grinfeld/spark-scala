@@ -1,11 +1,14 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.`export`
 
-import apps.`export`.db.VarEngDbFlow
-import apps.`export`.model.spark.RawEventV2ExportTransformer.SparkEncoder
-import infra.spark.DatasetTypes.SparkSessionType
-import infra.spark.PairStartFlowToDatasetFlow
-
+import com.mikerusoft.spark.scala.apps.ExecutedApp
+import com.mikerusoft.spark.scala.apps.`export`.db.{S3ExportPathsByCustomerFlow, VarEngDbFlow}
+import com.mikerusoft.spark.scala.apps.`export`.model.RawEventV2Export
+import com.mikerusoft.spark.scala.apps.`export`.model.spark.RawEventV2ExportTransformer
+import com.mikerusoft.spark.scala.apps.`export`.model.spark.RawEventV2ExportTransformer.SparkEncoder
+import com.mikerusoft.spark.scala.apps.helpers.db.DbProps
+import com.mikerusoft.spark.scala.infra.FlowOutput
+import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.SparkSessionType
+import com.mikerusoft.spark.scala.infra.spark.{PairStartFlowToDatasetFlow, ParquetWriterOutput}
 import org.apache.spark.sql.{Dataset, Row, SaveMode}
 
 import scala.util.{Failure, Success, Try}
@@ -64,8 +67,8 @@ object ExportApp {
   def apply(args: ExportArgs, dbProps: DbProps): ExportApp = {
     new ExportApp(args,
       args.specificSection match {
-        case None => S3ExportPathsBySectionFlow(args.actualDate)
-        case Some(customerId) => S3ExportPathsBySectionFlow(dbProps, customerId, args.actualDate)
+        case None => S3ExportPathsByCustomerFlow(args.actualDate)
+        case Some(customerId) => S3ExportPathsByCustomerFlow(dbProps, customerId, args.actualDate)
       },
       VarEngDbFlow(dbProps, args.specificSection, args.offsetHour),
       new ParquetWriterOutput[Row](args.outputPath, SaveMode.Overwrite, None, "customerId")

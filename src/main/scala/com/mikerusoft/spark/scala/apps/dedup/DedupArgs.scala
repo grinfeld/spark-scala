@@ -1,7 +1,8 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.dedup
 
-import infra.ConfigWrapper.ConfigWrapper
+import com.mikerusoft.spark.scala.apps.SimpleArgs
+import com.mikerusoft.spark.scala.apps.helpers.customers.WithCustomerListArgs
+import com.mikerusoft.spark.scala.infra.ConfigWrapper.ConfigWrapper
 import com.typesafe.config.Config
 
 import java.time.LocalDateTime
@@ -10,7 +11,7 @@ import java.time.format.DateTimeFormatter
 case class DedupArgs private[dedup] (override val runDate: LocalDateTime, override val showExecutionPlan: Boolean,
                                                 override val appName: String, override val master: Option[String],
                  inputFormat: Option[String], inputPath: String, outputPath: String, onlyDate: String, onlyHour: String, specificSections: List[Int])
-    extends SimpleArgs (runDate, showExecutionPlan, appName, master) with WithSectionListArgs
+    extends SimpleArgs (runDate, showExecutionPlan, appName, master) with WithCustomerListArgs
 
 object DedupArgs {
 
@@ -26,12 +27,12 @@ object DedupArgs {
       simple.showExecutionPlan,
       simple.appName,
       simple.master,
-      config.getStringOpt("dy.spark.input.format"),
-      config.getString("dy.spark.input.path"),
-      config.getString("dy.spark.output.path"),
+      config.getStringOpt("mikerusoft.spark.input.format"),
+      config.getString("mikerusoft.spark.input.path"),
+      config.getString("mikerusoft.spark.output.path"),
       simple.runDate.minusHours(1).format(DATE_ONLY_FORMAT),
       simple.runDate.minusHours(1).format(HOUR_ONLY_FORMAT),
-      config.getScalaIntList("dy.spark.sections")
+      config.getScalaIntList("mikerusoft.spark.sections")
     )
   }
 }

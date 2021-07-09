@@ -1,10 +1,9 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.infra.spark
 
-import DatasetTypes.{DatasetType, SparkSessionType, Tuple2DatasetType}
-import infra.FlowOutput
 
-import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
+import com.mikerusoft.spark.scala.infra.Flow
+import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.{DatasetType, SparkSessionType}
+import org.apache.spark.sql.{Dataset, SparkSession}
 
 trait DatasetFlow[I, C] extends Flow[I, C, Dataset]
 

@@ -1,8 +1,8 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.helpers.db
 
-import infra.spark.DatasetTypes.SparkSessionRowType
-
+import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.SparkSessionRowType
+import com.mikerusoft.spark.scala.infra.spark.StartFlow
+import com.mikerusoft.spark.scala.infra.spark.db.JdbcToOptionReader
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.language.higherKinds

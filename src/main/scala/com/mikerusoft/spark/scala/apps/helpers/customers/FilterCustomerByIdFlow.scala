@@ -1,12 +1,11 @@
-package com.mikerusoft.spark.scala
-package com.mikerusoft.spark.scala.apps.helpers.sections
+package com.mikerusoft.spark.scala.apps.helpers.customers
 
-import infra.spark.DatasetTypes.Dataset2RowType
-
+import com.mikerusoft.spark.scala.infra.spark.DatasetFlow
+import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.Dataset2RowType
 import org.apache.spark.sql.{Dataset, Row}
 
-object FilterSectionByIdFlow {
-  def apply(withSectionListArgs: WithSectionListArgs): Dataset2RowType = {
+object FilterCustomerByIdFlow {
+  def apply(withSectionListArgs: WithCustomerListArgs): Dataset2RowType = {
     withSectionListArgs.specificSections match {
       case List() => DatasetFlow.createFromDataset((ds: Dataset[Row]) => ds)
       case sections => DatasetFlow.createFromDataset((ds: Dataset[Row]) =>

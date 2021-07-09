@@ -1,7 +1,7 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.`export`
 
 import com.amazonaws.regions.Regions
+import com.mikerusoft.spark.scala.apps.SimpleArgs
 import com.typesafe.config.Config
 
 import java.time.LocalDateTime
@@ -28,17 +28,17 @@ object ExportArgs {
       simple.showExecutionPlan,
       simple.appName,
       simple.master,
-      config.getString("dy.spark.input.path"),
-      config.getString("dy.spark.output.path"),
-      config.getString("dy.spark.output.copyto.path"),
+      config.getString("mikerusoft.spark.input.path"),
+      config.getString("mikerusoft.spark.output.path"),
+      config.getString("mikerusoft.spark.output.copyto.path"),
       simple.runDate.minusHours(1).format(DATE_ONLY_FORMAT),
-      config.getString("dy.spark.dbconfig.path"),
+      config.getString("mikerusoft.spark.dbconfig.path"),
       getClosestOffset(actualDate),
-      if (config.hasPath("dy.spark.sections")) Option(config.getInt("dy.spark.sections")) else None,
-      if (config.hasPath("dy.spark.coalesce")) Option(config.getInt("dy.spark.coalesce")) else None,
-      if (config.hasPath("dy.spark.region") && config.getString("dy.spark.region").contains("euc")) Regions.EU_CENTRAL_1 else Regions.US_EAST_1,
+      if (config.hasPath("mikerusoft.spark.sections")) Option(config.getInt("mikerusoft.spark.sections")) else None,
+      if (config.hasPath("mikerusoft.spark.coalesce")) Option(config.getInt("mikerusoft.spark.coalesce")) else None,
+      if (config.hasPath("mikerusoft.spark.region") && config.getString("mikerusoft.spark.region").contains("euc")) Regions.EU_CENTRAL_1 else Regions.US_EAST_1,
       actualDate,
-      config.hasPath("dy.spark.enable.copy") && config.getBoolean("dy.spark.enable.copy")
+      config.hasPath("mikerusoft.spark.enable.copy") && config.getBoolean("mikerusoft.spark.enable.copy")
     )
   }
 

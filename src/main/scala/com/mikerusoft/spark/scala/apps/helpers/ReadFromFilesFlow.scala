@@ -1,8 +1,7 @@
-package com.mikerusoft.spark.scala
 package com.mikerusoft.spark.scala.apps.helpers
 
-import infra.spark.DatasetTypes.SparkSessionRowType
-
+import com.mikerusoft.spark.scala.infra.spark.DatasetFlow
+import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.SparkSessionRowType
 import org.apache.spark.sql.SparkSession
 
 object ReadFromFilesFlow {
