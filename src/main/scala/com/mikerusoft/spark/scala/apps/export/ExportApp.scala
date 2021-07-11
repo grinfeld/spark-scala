@@ -9,6 +9,7 @@ import com.mikerusoft.spark.scala.apps.helpers.db.DbProps
 import com.mikerusoft.spark.scala.infra.FlowOutput
 import com.mikerusoft.spark.scala.infra.spark.DatasetTypes.SparkSessionType
 import com.mikerusoft.spark.scala.infra.spark.{PairStartFlowToDatasetFlow, ParquetWriterOutput}
+import com.mikerusoft.spark.scala.model.gen.enums.{RawEventType, VAR}
 import org.apache.spark.sql.{Dataset, Row, SaveMode, SparkSession}
 
 import scala.util.{Failure, Success, Try}
@@ -36,9 +37,11 @@ case class ExportApp private[`export`](override val args: ExportArgs,
     val finalFlow = PairStartFlowToDatasetFlow.withFirstFlow(eventFlow).withSecondFlow(dbFlow)
       .combine((eventDataset, dbDataset) => {
         val dbDatasetWithSelect = dbDataset.select("campaignId", "campaignName", "experienceName", "experienceId", "experimentId", "customerId", "versionId", "variationNames")
-        val varEngs = eventDataset.filter(r => r.eventType.exists(t => t equals "ENGAGEMENT"))
-          .drop("campaignId", "campaignName", "experienceName", "experienceId", "variationNames")
-          .join(dbDatasetWithSelect, columns, "left")
+        val varEngs = eventDataset.filter(r => RawEventType(r.eventType) match {
+          case _: VAR => true
+          case _ => false
+        }).drop("campaignId", "campaignName", "experienceName", "experienceId", "variationNames")
+        .join(dbDatasetWithSelect, columns, "left")
         val noVarEng = eventDataset.filter(r => r.eventType.exists(t => !t.equals("ENGAGEMENT"))).selectExpr(columns:_*)
         noVarEng.union(varEngs)
     })

@@ -36,4 +36,11 @@ object RawEventType {
     def apply(name: String): RawEventType = {
       VALUES.getOrElse(name.toUpperCase, NA)
     }
+
+    def apply(name: Option[String]): RawEventType = {
+      name match {
+        case None => NA
+        case Some(tp) => VALUES.getOrElse(tp.toUpperCase, NA)
+      }
+    }
 }
