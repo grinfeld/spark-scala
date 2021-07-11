@@ -12,13 +12,12 @@ object VarEngDbFlow {
   private val SPLIT_CHAR = "~"
 
   def apply(dbProps: DbProps, customerId: Option[Int], offsetHour: Int): SparkSessionType[IncomingEventExport] = {
-    DbDatasetFlow(dbProps, buildQuery(customerId, offsetHour)).map(dataset => {
-        dataset.withColumn("variation_pair", concat(col("variation_performance_id"), lit(SPLIT_CHAR), col("variation_id"), lit(SPLIT_CHAR), col("variation_name")))
+    DbDatasetFlow(dbProps, buildQuery(customerId, offsetHour)).map(
+        _.withColumn("variation_pair", concat(col("variation_performance_id"), lit(SPLIT_CHAR), col("variation_id"), lit(SPLIT_CHAR), col("variation_name")))
           .groupBy("customer_id", "experience_id", "experience_name", "experiment_id", "experiment_version_id", "campaign_id", "campaign_name")
           .agg(collect_list("variation_pair"))
           .withColumnRenamed("collect_list(variation_pair)", "variation_names")
           .map(IncomingEventExportTransformer.transformRow)
-      }
     )
   }
 

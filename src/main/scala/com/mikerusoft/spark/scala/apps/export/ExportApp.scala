@@ -33,16 +33,18 @@ case class ExportApp private[`export`](override val args: ExportArgs,
     // defines the way we read data from s3
     val eventFlow = pathProvider.map((ds: Dataset[String]) => createInputDataset(ds, sparkSession))
 
+    def isVar(r: IncomingEventExport) = RawEventType(r.eventType) match {
+        case _: VAR => false
+        case _ => true
+      }
+
     // final flow - encapsulated the whole logic
     val finalFlow = PairStartFlowToDatasetFlow.withFirstFlow(eventFlow).withSecondFlow(dbFlow)
       .combine((eventDataset, dbDataset) => {
         val dbDatasetWithSelect = dbDataset.select("campaignId", "campaignName", "experienceName", "experienceId", "experimentId", "customerId", "versionId", "variationNames")
-        val varEngs = eventDataset.filter(r => RawEventType(r.eventType) match {
-          case _: VAR => true
-          case _ => false
-        }).drop("campaignId", "campaignName", "experienceName", "experienceId", "variationNames")
+        val varEngs = eventDataset.filter(r => !isVar(r)).drop("campaignId", "campaignName", "experienceName", "experienceId", "variationNames")
         .join(dbDatasetWithSelect, columns, "left")
-        val noVarEng = eventDataset.filter(r => r.eventType.exists(t => !t.equals("ENGAGEMENT"))).selectExpr(columns:_*)
+        val noVarEng = eventDataset.filter(r => isVar(r)).selectExpr(columns:_*)
         noVarEng.union(varEngs)
     })
 

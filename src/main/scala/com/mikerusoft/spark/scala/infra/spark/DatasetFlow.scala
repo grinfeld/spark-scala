@@ -9,7 +9,7 @@ trait DatasetFlow[I, C] extends Flow[I, C, Dataset]
 
 class FromDatasetFlow[I, C](val execution: Dataset[I] => Dataset[C]) extends DatasetType[I, C] {
   override def concat[B](flow: Flow[Dataset[C], B, Dataset]): DatasetType[I, B] =
-    new FromDatasetFlow[I, B]((i: Dataset[I]) => flow.execution(this.execution(i)))
+    new FromDatasetFlow[I, B](i => flow.execution(this.execution(i)))
 
   override def map[D](func: Dataset[C] => Dataset[D]): DatasetType[I, D] =
     this concat new FromDatasetFlow[C, D](func)

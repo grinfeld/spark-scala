@@ -11,6 +11,6 @@ object ExportCustomersFlow {
     "where se.export_type like 'raw_data' and se.active = 1 and sec.active = 1 and sec.time_zone_offset = "
 
   def apply(dbProps: DbProps, offset: Int): SparkSessionType[Int] = {
-    DbDatasetFlow(dbProps, query + s"$offset").map(ds => ds.select("customer_id").as(Encoders.scalaInt))
+    DbDatasetFlow(dbProps, query + s"$offset").map(_.select("customer_id").as(Encoders.scalaInt))
   }
 }

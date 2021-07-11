@@ -6,6 +6,6 @@ import org.apache.spark.sql.Encoders
 
 object SpecificCustomersFlow {
   def apply(sections: Int*): SparkSessionType[Int] = {
-    DatasetFlow.createFromSession(sparkSession => sparkSession.createDataset(sections)(Encoders.scalaInt))
+    DatasetFlow.createFromSession(_.createDataset(sections)(Encoders.scalaInt))
   }
 }

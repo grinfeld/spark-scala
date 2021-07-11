@@ -17,16 +17,14 @@ object S3ExportPathsByCustomerFlow {
 
   def apply(dbProps: DbProps, customerId: Int, date: LocalDateTime): SparkSessionType[String] = {
     DbDatasetFlow(dbProps, query + s"$customerId")
-      .map(ds =>
-        ds.select("time_zone_offset").as(Encoders.scalaInt)
+      .map(_.select("time_zone_offset").as(Encoders.scalaInt)
           .map(offset => if (offset <= 0) -offset else 24 - offset)(Encoders.scalaInt)
           .flatMap(hour => pathProvider.getPaths(date.minusDays(1).withHour(hour), date.withHour(hour)))(Encoders.STRING)
       )
   }
 
   def apply(date: LocalDateTime): SparkSessionType[String] = {
-    new StartFlow[String](sparkSession =>
-      sparkSession.createDataset(pathProvider.getPaths(date.minusDays(1), date))(Encoders.STRING)
+    new StartFlow[String](_.createDataset(pathProvider.getPaths(date.minusDays(1), date))(Encoders.STRING)
     )
   }
 }

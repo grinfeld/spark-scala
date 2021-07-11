@@ -15,7 +15,7 @@ case class DedupApp private[dedup] (override val args: DedupArgs, startFlow: Spa
 
   override def start(): Unit = {
     val flow: Flow[SparkSession, Row, Dataset] = startFlow.concat(filterSectionsFlow)
-      .map(dataset => dataset.repartition(functions.col("customerId"))
+      .map(_.repartition(functions.col("customerId"))
         .dropDuplicates(DEDUP_FIELDS)
         .withColumn("date", functions.lit(args.onlyDate)).withColumn("hour", functions.lit(args.onlyHour)))
     output.output(flow.execution(createSparkSessionBuilder().getOrCreate()))
@@ -27,6 +27,6 @@ object DedupApp {
       args,
       ReadFromFilesFlow(args.inputFormat.getOrElse("avro"), args.inputPath),
       FilterCustomerByIdFlow(args),
-      new ParquetWriterOutput[Row](args.outputPath, SaveMode.Overwrite, None, "customerId")
+      ParquetWriterOutput[Row](args.outputPath, SaveMode.Overwrite, None, "customerId")
   )
 }

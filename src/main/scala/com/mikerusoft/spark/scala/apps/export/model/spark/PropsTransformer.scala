@@ -17,7 +17,7 @@ object PropsTransformer {
   }
 
   implicit object PropsTransformer extends PropsTransformer[RawEventType] {
-    override def transform(tp: RawEventType, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
+    override def transform(tp: RawEventType, row: Row, copyTo: IncomingEventExport): IncomingEventExport =
       tp match {
         case v: EVENT => v.transform(row, copyTo)
         case v: VIEW => v.transform(row, copyTo)
@@ -25,7 +25,6 @@ object PropsTransformer {
         case v: IDENTIFY => v.transform(row, copyTo)
         case _: NA => copyTo
       }
-    }
   }
 
   implicit object EventPropsTransformer extends PropsTransformer[EVENT] {
@@ -36,16 +35,16 @@ object PropsTransformer {
     val SYNC_CART_V1 = "sync-cart-v1"
     val SYNC_WISH_LIST_V1 = "sync-wishlist-v1"
 
-    override def transform(tp: EVENT, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
+    override def transform(tp: EVENT, row: Row, copyTo: IncomingEventExport): IncomingEventExport =
       copyTo.copy(
         eventId = row.getAsOption("eventId"),
         eventName = row.getAsOption("eventName"),
         eventValue = row.getAsOption("value")
       )
-    }
   }
+
   implicit object ViewPropsTransformer extends PropsTransformer[VIEW] {
-    override def transform(tp: VIEW, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
+    override def transform(tp: VIEW, row: Row, copyTo: IncomingEventExport): IncomingEventExport =
       row.getAsOption[Row]("pageContext") match {
         case None => copyTo
         case Some(ctx) =>
@@ -60,8 +59,8 @@ object PropsTransformer {
             }
           )
       }
-    }
   }
+
   implicit object VarPropsTransformer extends PropsTransformer[VAR] {
     override def transform(tp: VAR, row: Row, copyTo: IncomingEventExport): IncomingEventExport = {
       val experimentMetadataRow: Row = row.getAs("experimentMetadata")
@@ -73,6 +72,7 @@ object PropsTransformer {
       )
     }
   }
+
   implicit object IdentifyPropsTransformer extends PropsTransformer[IDENTIFY] {
     override def transform(tp: IDENTIFY, row: Row, copyTo: IncomingEventExport): IncomingEventExport = copyTo
   }
