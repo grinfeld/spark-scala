@@ -34,7 +34,7 @@ case class ExportApp private[`export`](override val args: ExportArgs,
 
     // final flow - encapsulated the whole logic
     val finalFlow = PairStartFlowToDatasetFlow[IncomingEventExport, IncomingEventExport]()
-      .withFirst(eventFlow).withSecond(dbFlow).combine((eventDataset, dbDataset) => {
+      .withFirstFlow(eventFlow).withSecondFlow(dbFlow).combine((eventDataset, dbDataset) => {
         val dbDatasetWithSelect = dbDataset.select("campaignId", "campaignName", "experienceName", "experienceId", "experimentId", "customerId", "versionId", "variationNames")
         val varEngs = eventDataset.filter(r => r.eventType.exists(t => t equals "ENGAGEMENT"))
           .drop("campaignId", "campaignName", "experienceName", "experienceId", "variationNames")
