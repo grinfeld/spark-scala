@@ -25,7 +25,7 @@ object IncomingEventExportTransformer {
     }
   }
 
-  def transformRow: Row => IncomingEventExport = { implicit row => {
+  def transformRow: Row => IncomingEventExport = { row => {
       IncomingEventExport(row.getAsOption("section_id"), row.getAsList("variation_names"),
         row.getAsOption("experiment_id"), row.getAsOption("experience_id"), row.getAsOption("experience_name"),
         row.getAsOption("experiment_version_id"), row.getAsOption("campaign_id"), row.getAsOption("campaign_name")

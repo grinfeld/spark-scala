@@ -15,6 +15,23 @@ class PairStartFlowToDatasetFlow[A1, A2, C](val first: SparkSessionType[A1], val
 }
 
 object PairStartFlowToDatasetFlow {
+  case class Holder[A1, A2] private (first: Option[SparkSessionType[A1]], second: Option[SparkSessionType[A2]]) {
+    def this() = this(None, None)
+    def withFirst(a1:SparkSessionType[A1]): Holder[A1, A2] = this.copy(first = Option(a1))
+    def withSecond(a2:SparkSessionType[A2]): Holder[A1, A2] = this.copy(first = Option(a2))
+    def combine[C](combiner: (Dataset[A1], Dataset[A2]) => Dataset[C]): PairStartFlowToDatasetFlow[A1, A2, C] = {
+      (for {
+        f1 <- first
+        f2 <- second
+      } yield (f1, f2)) match {
+        case None => throw IllegalArgumentException
+        case Some(starts) => new PairStartFlowToDatasetFlow(starts._1, starts._2, FromDatasetPairFlow(combiner))
+      }
+    }
+  }
+
+  def apply[A1, A2](): Holder[A1, A2] = new Holder[A1, A2]()
+
   def apply[A1, A2, C](first: SparkSessionType[A1], second: SparkSessionType[A2], combiner: (Dataset[A1], Dataset[A2]) => Dataset[C]): SparkSessionType[C] =
     new PairStartFlowToDatasetFlow(first, second, FromDatasetPairFlow(combiner))
 }
