@@ -30,7 +30,7 @@ object PairStartFlowToDatasetFlow {
     }
   }
 
-  def apply[A1, A2](): Holder[A1, A2] = new Holder[A1, A2]()
+  def withFirstFlow[A1, A2](first: SparkSessionType[A1]): Holder[A1, A2] = new Holder[A1, A2]().withFirstFlow(first)
 
   def apply[A1, A2, C](first: SparkSessionType[A1], second: SparkSessionType[A2], combiner: (Dataset[A1], Dataset[A2]) => Dataset[C]): SparkSessionType[C] =
     new PairStartFlowToDatasetFlow(first, second, FromDatasetPairFlow(combiner))

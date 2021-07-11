@@ -17,6 +17,12 @@ class ParquetWriterOutput[C](val pathTo: String, val saveMode: SaveMode, val wri
   }
 }
 
+object ParquetWriterOutput {
+  def apply[C](pathTo: String, saveMode: SaveMode, writeCoalesce: Option[Int], colNames: String*): ParquetWriterOutput[C] = {
+    new ParquetWriterOutput[C](pathTo, saveMode, writeCoalesce, colNames:_*)
+  }
+}
+
 class ListWriterOutput[C] extends DatasetFlowOutput[C, List[C]] {
   override def output(fc: Dataset[C]): List[C] = fc.collectAsList().asScala.toList
 }

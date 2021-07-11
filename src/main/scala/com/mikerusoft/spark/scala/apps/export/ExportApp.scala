@@ -33,8 +33,8 @@ case class ExportApp private[`export`](override val args: ExportArgs,
     val eventFlow = pathProvider.map((ds: Dataset[String]) => createInputDataset(ds, sparkSession))
 
     // final flow - encapsulated the whole logic
-    val finalFlow = PairStartFlowToDatasetFlow[IncomingEventExport, IncomingEventExport]()
-      .withFirstFlow(eventFlow).withSecondFlow(dbFlow).combine((eventDataset, dbDataset) => {
+    val finalFlow = PairStartFlowToDatasetFlow.withFirstFlow(eventFlow).withSecondFlow(dbFlow)
+      .combine((eventDataset, dbDataset) => {
         val dbDatasetWithSelect = dbDataset.select("campaignId", "campaignName", "experienceName", "experienceId", "experimentId", "customerId", "versionId", "variationNames")
         val varEngs = eventDataset.filter(r => r.eventType.exists(t => t equals "ENGAGEMENT"))
           .drop("campaignId", "campaignName", "experienceName", "experienceId", "variationNames")
@@ -69,7 +69,7 @@ object ExportApp {
         case Some(customerId) => S3ExportPathsByCustomerFlow(dbProps, customerId, args.actualDate)
       },
       VarEngDbFlow(dbProps, args.specificSection, args.offsetHour),
-      new ParquetWriterOutput[Row](args.outputPath, SaveMode.Overwrite, None, "customerId")
+      ParquetWriterOutput[Row](args.outputPath, SaveMode.Overwrite, None, "customerId")
     )
   }
 }
