@@ -49,12 +49,10 @@ object PropsTransformer {
         case None => copyTo
         case Some(ctx) =>
           val contextType = RecommendationContextType(ctx.getAsOption("typeOrdinal"))
-          val contextData = row.getAsList[String]("data")
           copyTo.copy(
             contextType = Option(contextType.name),
-            contextData = contextData,
             productIds = contextType match {
-              case _: PRODUCT => contextData
+              case _: PRODUCT => row.getAsList[String]("data")
               case _ => List()
             }
           )
