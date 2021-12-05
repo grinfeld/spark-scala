@@ -21,4 +21,8 @@ object TestRedis extends App {
       log.info(s"<<<<<<Success -> ${res}")
     }))
 
+  new RedisFactory().redisCommands().set("driver", "hello")
+  val res: String = redis.redisCommands().get("driver")
+  log.info(s">>>>>>>Success Driver -> ${res}")
+
 }
