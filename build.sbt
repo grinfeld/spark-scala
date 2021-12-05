@@ -15,7 +15,6 @@ val versions = new {
   val typesafe_config = "1.4.1"
   val aws_sdk_s3 = "1.11.655"
   val hadoop_aws = "3.2.0"
-  val lettuce = "6.1.5.RELEASE"
   val tests = new {
     val scalaTest = "3.2.0"
     val mockito = "1.16.0"
@@ -34,12 +33,11 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "cats-core" % versions.cats,
       "ch.qos.logback" % "logback-classic" % versions.logback,
       "mysql" % "mysql-connector-java" % versions.mysql,
-      "io.lettuce" % "lettuce-core" % versions.lettuce,
-      "com.amazonaws" % "aws-java-sdk" % versions.aws_sdk_s3,
-      "org.apache.hadoop" % "hadoop-aws" % versions.hadoop_aws,
-      "org.apache.spark" %% "spark-core" % versions.spark,
-      "org.apache.spark" %% "spark-sql" % versions.spark,
-      "org.apache.spark" %% "spark-avro" % versions.spark,
+      "com.amazonaws" % "aws-java-sdk" % versions.aws_sdk_s3 % "provided",
+      "org.apache.hadoop" % "hadoop-aws" % versions.hadoop_aws % "provided",
+      "org.apache.spark" %% "spark-core" % versions.spark % "provided",
+      "org.apache.spark" %% "spark-sql" % versions.spark % "provided",
+      "org.apache.spark" %% "spark-avro" % versions.spark % "provided",
       "org.scalatest" %% "scalatest" % versions.tests.scalaTest % "test",
       "org.mockito" %% "mockito-scala-scalatest" % versions.tests.mockito % "test"
     )
