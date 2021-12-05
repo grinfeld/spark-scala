@@ -1,12 +1,12 @@
 package com.mikerusoft.spark.scala.test
 
 import org.apache.spark.sql.SparkSession
-
-import scala.util.{Failure, Success, Try}
+import org.slf4j.LoggerFactory
 
 object TestRedis extends App {
 
   @transient lazy val redis = new RedisFactory()
+  @transient lazy val log = LoggerFactory.getLogger("TestRedis")
 
   val sparkSession = SparkSession.builder.appName("test").master("local[*]").getOrCreate()
 
@@ -16,8 +16,9 @@ object TestRedis extends App {
 
   dataset.
     foreachPartition((it: Iterator[Int]) => it.foreach(i => {
-      redis.redisCommands().sadd("haha", i.toString)
-      println("<<<<<<Success")
+      redis.redisCommands().set(i.toString, s"${(i * 5).toString}")
+      val res: String = redis.redisCommands().get(i.toString)
+      log.info(s"<<<<<<Success -> ${res}")
     }))
 
 }
