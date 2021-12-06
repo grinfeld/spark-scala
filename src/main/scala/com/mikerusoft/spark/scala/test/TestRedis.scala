@@ -8,7 +8,9 @@ object TestRedis extends App {
   @transient lazy val redis = new RedisFactory()
   @transient lazy val log = LoggerFactory.getLogger("TestRedis")
 
-  val sparkSession = SparkSession.builder.appName("test").master("local[*]").getOrCreate()
+  val sparkSession = SparkSession.builder.appName("test").master("local[*]")
+    .config("spark.executor.cores", "4")
+    .getOrCreate()
 
   import sparkSession.implicits._
 
