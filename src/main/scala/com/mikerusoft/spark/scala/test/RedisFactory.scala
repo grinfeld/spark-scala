@@ -6,13 +6,14 @@ import io.lettuce.core.api.sync.RedisCommands
 
 class RedisFactory {
 
-  private lazy val syncCommands: RedisCommands[String, String] = init()
+  private lazy val redisClient: RedisClient = init()
 
-  private def init(): RedisCommands[String, String] = {
-    val redisClient: RedisClient = RedisClient.create("redis://localhost:6379/")
+  private def init(): RedisClient = {
+    RedisClient.create("redis://localhost:6379/")
+  }
+
+  def redisCommands(): RedisCommands[String, String] = {
     val connection: StatefulRedisConnection[String, String] = redisClient.connect
     connection.sync
   }
-
-  def redisCommands(): RedisCommands[String, String] = syncCommands
 }
