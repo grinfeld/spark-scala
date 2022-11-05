@@ -1,6 +1,6 @@
 package com.mikerusoft.spark.scala.iceberg
 
-import com.dy.experiment.ExperimentEvent
+import com.dy.experiment.ExperimentEventSpark
 import org.apache.iceberg.catalog.TableIdentifier
 import org.apache.iceberg.exceptions.NoSuchTableException
 import org.apache.iceberg.hadoop.HadoopCatalog
@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 
 object CreateFromExistedSchema extends App {
 
-  /*val avroSchemaOrig = new Parser().parse(ExperimentEvent.SCHEMA$.toString())
+  /*val avroSchemaOrig = new Parser().parse(ExperimentEventSpark.SCHEMA$.toString())
   val schema = AvroSchemaUtil.toIceberg(avroSchemaOrig)*/
 
   val spark = SparkSession.builder()
@@ -43,7 +43,7 @@ object CreateFromExistedSchema extends App {
 
   import spark.implicits._
 
-  val parquetSchema = SchemaConverters.toSqlType(ExperimentEvent.SCHEMA$).dataType.asInstanceOf[StructType]
+  val parquetSchema = SchemaConverters.toSqlType(ExperimentEventSpark.SCHEMA$).dataType.asInstanceOf[StructType]
   val icebergSchema = SparkSchemaUtil.convert(parquetSchema)
 
   val catalog = new HadoopCatalog(spark.sparkContext.hadoopConfiguration, "s3a://test-sink/warehouse/")
