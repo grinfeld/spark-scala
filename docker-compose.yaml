@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  bootcamp-minio:
+    container_name: minio
+    image: minio/minio
+    env_file:
+    - docker/.env
+    ports:
+    - "9000:9000"
+    - "9001:9001"
+    command: server /data --console-address ":9001"
+
+  bootcamp-minio-setup:
+    image: minio/mc
+    build:
+      context: .
+      dockerfile: docker/minio/Dockerfile
+    depends_on:
+    - bootcamp-minio
+    container_name: minio-setup
+    env_file:
+    - docker/.env
+    entrypoint: "/setup.sh"

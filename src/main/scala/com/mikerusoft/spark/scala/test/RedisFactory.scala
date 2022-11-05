@@ -4,7 +4,12 @@ import io.lettuce.core.RedisClient
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.sync.RedisCommands
 
-class RedisFactory {
+class RedisFactory(i: Int) {
+
+  def this() = {
+    this(0)
+    println("fdgdfgd")
+  }
 
   private lazy val redisClient: RedisClient = init()
 
